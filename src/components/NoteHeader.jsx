@@ -4,7 +4,7 @@ function NoteHeader({ notes, sortBy, onSortBy }) {
   return (
     <div className="note-header">
       <h1>
-        My Notes <span>{notes.length}</span>
+        My Notes <span>({notes.length})</span>
       </h1>
       <div>
         <select value={sortBy} onChange={onSortBy}>

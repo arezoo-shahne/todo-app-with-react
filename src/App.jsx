@@ -1,26 +1,38 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import "./App.css";
 import AddNewNote from "./components/AddNewNote";
 import NoteList from "./components/NoteList";
 import NoteStatus from "./components/NoteStatus";
 import NoteHeader from "./components/NoteHeader";
+function noteReducer(notes, { type, payload }) {
+  switch (type) {
+    case "addNote": {
+      return [...notes, payload];
+    }
+    case "delete": {
+      return notes.filter((s) => s.id !== payload);
+    }
+    case "setComplete": {
+      return notes.map((note) =>
+        note.id === payload ? { ...note, isCompleted: !note.isCompleted } : note
+      );
+    }
+    default:
+      throw new Error("Unknown" + type);
+  }
+}
 function App() {
-  const [notes, setNotes] = useState([]);
   const [sortBy, setSortBy] = useState("");
-
+  const [notes, dispatch] = useReducer(noteReducer, []);
   const handleAddNote = (newNotes) => {
-    setNotes((prevState) => [...prevState, newNotes]);
+    dispatch({ type: "addNote", payload: newNotes });
   };
   const handleDeleteNote = (id) => {
-    setNotes(notes.filter((prevNote) => prevNote.id !== id));
+    dispatch({ type: "delete", payload: id });
   };
   const handleCheckComplete = (e) => {
     const noteId = Number(e.target.value);
-    setNotes((prevState) =>
-      prevState.map((note) =>
-        note.id === noteId ? { ...note, isCompleted: !note.isCompleted } : note
-      )
-    );
+    dispatch({ type: "setComplete", payload: noteId });
   };
 
   return (
